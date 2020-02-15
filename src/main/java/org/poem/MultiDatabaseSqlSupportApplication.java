@@ -1,5 +1,7 @@
 package org.poem;
 
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.poem.entity.TTaskDetail;
 import org.poem.service.TGlobalSqlVariablesService;
@@ -63,9 +65,10 @@ public class MultiDatabaseSqlSupportApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Map<String, GlobalSqlVariablesVO> allGlobalSqlVariableList = globalSqlVariablesService.getAllGlobalSqlVariableList();
-        List<TTaskDetail> detailList = tTaskDetailService.list();
-        int index = 0;
-        for (TTaskDetail tTaskDetail : detailList.subList(index, index + 1)) {
+        QueryWrapper<TTaskDetail> tTaskDetailQueryWrapper =new QueryWrapper<>();
+//        tTaskDetailQueryWrapper.lambda().gt(TTaskDetail::getId, 1306);
+        List<TTaskDetail> detailList = tTaskDetailService.list(tTaskDetailQueryWrapper);
+        for (TTaskDetail tTaskDetail : detailList) {
             executorMysql(tTaskDetail, allGlobalSqlVariableList);
             executorPostgres(tTaskDetail, allGlobalSqlVariableList);
         }
@@ -84,10 +87,10 @@ public class MultiDatabaseSqlSupportApplication implements CommandLineRunner {
         logger.info("\n" + sql);
         logger.info("[Mysql]================================ Mysql [" + tTaskDetail.getId() + "] ============================================");
         List<Map<String, Object>> rs = mysqlDataSource.queryForList(sql);
-        logger.info("[Mysql] - " + rs.size() + " *********************** ");
-        logger.info("[Mysql]");
-        logger.info("[Mysql]");
-        logger.info("[Mysql]");
+        logger.info("[Mysql] - " + "[" + tTaskDetail.getId() + "] " + JSONObject.toJSONString(rs.subList(0, Math.min(rs.size(), 5))) + " *********************** ");
+        logger.info("[Mysql] - " + "[" + tTaskDetail.getId() + "] ");
+        logger.info("[Mysql] - " + "[" + tTaskDetail.getId() + "] ");
+        logger.info("[Mysql] - " + "[" + tTaskDetail.getId() + "] ");
     }
 
 
@@ -104,9 +107,9 @@ public class MultiDatabaseSqlSupportApplication implements CommandLineRunner {
         logger.info("\n" + sql);
         logger.info("[Postgres]================================ Postgres [" + tTaskDetail.getId() + "] ============================================");
         List<Map<String, Object>> rs = postgresDataSource.queryForList(sql);
-        logger.info("[Postgres] - " + rs.size() + " *********************** ");
-        logger.info("[Postgres]");
-        logger.info("[Postgres]");
-        logger.info("[Postgres]");
+        logger.info("[Postgres] - " + "[" + tTaskDetail.getId() + "] " + JSONObject.toJSONString(rs.subList(0, Math.min(rs.size(), 5))) + " *********************** ");
+        logger.info("[Postgres] - " + "[" + tTaskDetail.getId() + "] ");
+        logger.info("[Postgres] - " + "[" + tTaskDetail.getId() + "] ");
+        logger.info("[Postgres] - " + "[" + tTaskDetail.getId() + "] ");
     }
 }

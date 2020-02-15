@@ -24,19 +24,16 @@ public class GlobalSqlVariablesUtils {
     public static void main(String[] args) {
         ContextDatabase.setSourceSchema(EnumDataType.POSTGRES);
         ThreadEnumDataType.setSourceSchema(EnumDataType.MYSQL);
-        String sql = "select  &{ifnull(\n" +
-                "\t\t\t\tout_tabale_1.pay_time,\n" +
-                "\t\t\t\tout_table_2.pay_time\n" +
-                "\t\t\t)} AS stree from user ";
+        String sql = "SELECT  &{case_number(@●prizeName●)} as prize FROM lottery_win_prize ORDER BY ●createTime● ";
         System.out.println(sql);
         System.out.println("\n\n");
         System.out.println(sqlVariableManage(sql, new HashMap<String, GlobalSqlVariablesVO>() {{
             GlobalSqlVariablesVO variablesVO = new GlobalSqlVariablesVO();
-            variablesVO.setFunctionName("IFNULL");
-            variablesVO.setMysqlFunction("COALESCE");
+            variablesVO.setFunctionName("case_number");
+            variablesVO.setMysqlFunction("CAST(@ as unsigned)");
             variablesVO.setHiveFunction("");
-            variablesVO.setPostgresFunction("");
-            put("ifnull", variablesVO);
+            variablesVO.setPostgresFunction("substring(@, '[0-9]*')");
+            put("case_number", variablesVO);
 
         }}));
     }
@@ -106,7 +103,26 @@ public class GlobalSqlVariablesUtils {
             }
         }
         m.appendTail(sr);
-        return sr.toString();
+        return replaceSpecialCharacter(sr.toString());
+    }
+
+    /**
+     * 替换特殊字符
+     * @param originSql
+     * @return
+     */
+    private static String replaceSpecialCharacter(String originSql){
+        EnumDataType enumDataType = ThreadEnumDataType.getSourceSchema();
+        switch (enumDataType.getType().toLowerCase()) {
+            case "hive":
+                return originSql.replaceAll("●", "");
+            case "hbase":
+                return originSql.replaceAll("●", "");
+            case "postgres":
+                return originSql.replaceAll("●", "\"");
+            default:
+                return  originSql.replaceAll("●", "");
+        }
     }
 
     /**

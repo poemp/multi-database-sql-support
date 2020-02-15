@@ -6,10 +6,10 @@ spring:
     password: 123456
   warehouse:
     postgres:
-      url: jdbc:postgresql://127.0.0.1:5432/zgdc_warehouse_source?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=Asia/Shanghai
+      url: jdbc:postgresql://47.94.18.53:11001/zgdc_warehouse_source?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=Asia/Shanghai
       username: postgres
-      password: 123456
+      password: ZGdc@2019
     mysql:
-      url: jdbc:mysql://127.0.0.1:3306/zgdc_warehouse_source?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://47.94.18.53:11007/warehouse_source?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=Asia/Shanghai
       username: root
-      password: 123456
+      password: ZGdc@2019
