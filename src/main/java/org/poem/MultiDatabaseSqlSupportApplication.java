@@ -64,7 +64,7 @@ public class MultiDatabaseSqlSupportApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Map<String, GlobalSqlVariablesVO> allGlobalSqlVariableList = globalSqlVariablesService.getAllGlobalSqlVariableList();
         List<TTaskDetail> detailList = tTaskDetailService.list();
-        int index = 6;
+        int index = 0;
         for (TTaskDetail tTaskDetail : detailList.subList(index, index + 1)) {
             executorMysql(tTaskDetail, allGlobalSqlVariableList);
             executorPostgres(tTaskDetail, allGlobalSqlVariableList);
