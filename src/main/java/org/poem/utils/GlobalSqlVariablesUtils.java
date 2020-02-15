@@ -2,6 +2,7 @@ package org.poem.utils;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.google.common.collect.Maps;
+import org.poem.ThreadEnumDataType;
 import org.poem.vo.GlobalSqlVariablesVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public class GlobalSqlVariablesUtils {
     private static Pattern regex = Pattern.compile("&\\{([^}]*)\\}");
 
     public static void main(String[] args) {
-        ContextDatabase.setSourceSchema(EnumDataType.MYSQL);
+        ContextDatabase.setSourceSchema(EnumDataType.POSTGRES);
         String sql = "SELECT\n" +
                 "\tcreate_time AS create_time as date,\n" +
                 "\tcount(1) as pople_number\n" +
@@ -53,7 +54,7 @@ public class GlobalSqlVariablesUtils {
             vo.setFunctionName("date_sub_10");
             vo.setMysqlFunction("DATE_SUB(@, INTERVAL 10 DAY)");
             vo.setHiveFunction("");
-            vo.setPostgresFunction("");
+            vo.setPostgresFunction("@ - INTERVAL '10 DAY' ");
             put("date_sub_10", vo);
 
 
@@ -141,7 +142,7 @@ public class GlobalSqlVariablesUtils {
      * @return
      */
     private static String getSchema(GlobalSqlVariablesVO globalSqlVariablesVO) {
-        EnumDataType enumDataType = ContextDatabase.getSourceSchema();
+        EnumDataType enumDataType = ThreadEnumDataType.getSourceSchema();
         switch (enumDataType.getType()) {
             case "hive":
                 return globalSqlVariablesVO.getHiveFunction();

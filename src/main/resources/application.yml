@@ -4,3 +4,12 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/zgdc_services?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
+  warehouse:
+    postgres:
+      url: jdbc:postgresql://127.0.0.1:5432/zgdc_warehouse_source?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=Asia/Shanghai
+      username: postgres
+      password: 123456
+    mysql:
+      url: jdbc:mysql://127.0.0.1:3306/zgdc_warehouse_source?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&serverTimezone=Asia/Shanghai
+      username: root
+      password: 123456
