@@ -23,47 +23,21 @@ public class GlobalSqlVariablesUtils {
 
     public static void main(String[] args) {
         ContextDatabase.setSourceSchema(EnumDataType.POSTGRES);
-        String sql = "SELECT\n" +
-                "\tcreate_time AS create_time as date,\n" +
-                "\tcount(1) as pople_number\n" +
-                "FROM\n" +
-                "\t(\n" +
-                "\t\tSELECT\n" +
-                "\t\t\tcreate_time AS create_time,\n" +
-                "\t\t\tlabor_union_id labor_union_id\n" +
-                "\t\tFROM\n" +
-                "\t\t\tcustomer_info\n" +
-                "\t\tWHERE\n" +
-                "\t\t\tcreate_time >= &{date_sub_10(NOW())}\n" +
-                "\t) b\n" +
-                "GROUP BY\n" +
-                "\tcreate_time\n" +
-                "ORDER BY\n" +
-                "\tcreate_time ASC";
+        ThreadEnumDataType.setSourceSchema(EnumDataType.MYSQL);
+        String sql = "select  &{ifnull(\n" +
+                "\t\t\t\tout_tabale_1.pay_time,\n" +
+                "\t\t\t\tout_table_2.pay_time\n" +
+                "\t\t\t)} AS stree from user ";
         System.out.println(sql);
         System.out.println("\n\n");
         System.out.println(sqlVariableManage(sql, new HashMap<String, GlobalSqlVariablesVO>() {{
             GlobalSqlVariablesVO variablesVO = new GlobalSqlVariablesVO();
-            variablesVO.setFunctionName("date_format");
-            variablesVO.setMysqlFunction("ROM_UNIXTIME(@, '%H:%i')");
+            variablesVO.setFunctionName("IFNULL");
+            variablesVO.setMysqlFunction("COALESCE");
             variablesVO.setHiveFunction("");
             variablesVO.setPostgresFunction("");
-            put("date_format", variablesVO);
+            put("ifnull", variablesVO);
 
-            GlobalSqlVariablesVO vo = new GlobalSqlVariablesVO();
-            vo.setFunctionName("date_sub_10");
-            vo.setMysqlFunction("DATE_SUB(@, INTERVAL 10 DAY)");
-            vo.setHiveFunction("");
-            vo.setPostgresFunction("@ - INTERVAL '10 DAY' ");
-            put("date_sub_10", vo);
-
-
-            GlobalSqlVariablesVO now = new GlobalSqlVariablesVO();
-            now.setFunctionName("date_format_date");
-            now.setMysqlFunction("DATE_FORMAT(@, \"%Y-%m-%d %H:%i:%s\")");
-            now.setHiveFunction("");
-            now.setPostgresFunction("");
-            put("date_format_date", now);
         }}));
     }
 
@@ -108,8 +82,7 @@ public class GlobalSqlVariablesUtils {
                     .replaceAll(functionName, "");
             return params.substring(1, params.length() - 1);
         }else if (sqlVariable.contains("(")){
-            String params = sqlVariable.substring(sqlVariable.indexOf("(")+1, sqlVariable.length() -1);
-            return params;
+            return sqlVariable.substring(sqlVariable.indexOf("(")+1, sqlVariable.length() -1);
         }
         return "";
     }
@@ -172,9 +145,14 @@ public class GlobalSqlVariablesUtils {
                     GlobalSqlVariablesVO variablesVO = variablesVOMap.get(functionName);
                     if (variablesVO != null) {
                         String mysqlFunction = getSchema(variablesVO);
-                        if (StringUtils.isNotEmpty(mysqlFunction) ) {
+                        if (StringUtils.isNotEmpty(mysqlFunction) && mysqlFunction.contains("@")) {
                             String newFunctionName = mysqlFunction.replaceAll("@", par);
                             newVariables.put(k, newFunctionName);
+                        }else{
+                            if (StringUtils.isNotEmpty(mysqlFunction) && !mysqlFunction.contains("@")) {
+                                String newFunctionName = k.replaceAll("&\\{"+ functionName, mysqlFunction).replaceAll("}","");
+                                newVariables.put(k, newFunctionName);
+                            }
                         }
                     }
                 }
